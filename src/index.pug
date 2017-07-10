@@ -9,7 +9,49 @@ html
         script(src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous")
         script(src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous")
         script(src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous")
-body
+    body
+        nav.navbar.navbar-light.bg-faded
+            form.form-inline
+                input.form-control.mr-sm-2.w-50(type='text' placeholder='search...')
+                button.btn.btn-outline-success.my-2.my-sm-0 Search
+            form.form-inline.mt-4
+                input#sports(type='checkbox' value='sports')
+                label.btn-custom(for='sports') Sports
+                input#politics(type='checkbox' value='politics')
+                label.btn-custom(for='politics') Politics
+                input#food(type='checkbox' value='food')
+                label.btn-custom(for='food') Food
+                input#business(type='checkbox' value='business')
+                label.btn-custom(for='business') Business
+                input#tech(type='checkbox' value='tech')
+                label.btn-custom(for='tech') Tech
+                input#culture(type='checkbox' value='culture')
+                label.btn-custom(for='culture') Culture
+                input#showbiz(type='checkbox' value='showbiz')
+                label.btn-custom(for='showbiz') Showbiz
+
+        .container
+            .row
+                .col-sm-12
+                    .card.mt-2
+                        .card-header
+                            span.badge.badge-danger.mr-1
+                                | #politics
+                            span.badge.badge-danger.mr-1
+                                | #tech
+                            span.badge.badge-danger.mr-1
+                                | #showbiz
+                            span.badge.badge-danger.mr-1
+                                | #sports
+
+                            .date.pull-right
+                                | 22-10-2016
+                        .card-block
+                            .card-title
+                                | Qui veritatis explicabo voluptates.
+                            .card-text
+                                img.float-l.mr-4(src='http://via.placeholder.com/150x150')
+                                | Voluptates officia optio impedit sint quas qui. Sed dignissimos quos doloribus aut. Saepe atque doloribus nemo. Qui qui atque sapiente suscipit animi itaque velit. Et quia consequatur est reiciendis tempora alias eligendi.
 
 
 
@@ -17,5 +59,12 @@ body
 
 
 
-    script(src='js/request.js')
-    script(src='js/index.js')
+
+
+
+
+
+
+
+        script(src='js/dom_creator.js')
+        script(src='js/index.js')
