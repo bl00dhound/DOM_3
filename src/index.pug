@@ -10,11 +10,11 @@ html
         script(src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous")
         script(src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous")
         script(src="//cdnjs.cloudflare.com/ajax/libs/ramda/0.24.1/ramda.min.js")
+        script(src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js")
     body
         nav.navbar.navbar-light.bg-faded
             form.form-inline
-                input.form-control.mr-sm-2.w-50(type='text' placeholder='search...')
-                button.btn.btn-outline-success.my-2.my-sm-0 Search
+                input#search.form-control.mr-sm-2.w-50(type='text' placeholder='search...' name='search')
             form.form-inline.mt-4
                 input#sport(type='checkbox' value='sport')
                 label.btn-custom(for='sport') Sport
@@ -32,7 +32,7 @@ html
                 label.btn-custom(for='showbiz') Showbiz
 
         .container
-            .row
+            .row#row
                 .col-sm-12
                     .card.mt-2
                         .card-header
@@ -59,13 +59,4 @@ html
 
 
 
-
-
-
-
-
-
-
-
-        script(src='js/dom_creator.js')
         script(src='js/index.js')
