@@ -22,6 +22,7 @@
   let tags = []
   let articles = []
   let sortedArticles = []
+  let startIdx = 0
 
 
   const getJSON = (url) => fetch(url)
@@ -49,21 +50,35 @@
 
   const createNode = (tag) => document.createElement(tag)
 
-  const createCard = (article, tags) => {
+  const cardDOM = () => {
     let curriedAdd = R.curry(addClass)
-
     let colSm12 = curriedAdd(createNode('div'))('col-sm-12')('')('')
     let card = curriedAdd(createNode('div'))('card')('mt-2')('')
     let cardHeader = curriedAdd(createNode('div'))('card-header')('')('')
     let cardBlock = curriedAdd(createNode('div'))('card-block')('')('')
     let cardTitle = curriedAdd(createNode('div'))('card-title')('')('')
-    cardTitle.innerText = article.title
     let cardText = curriedAdd(createNode('div'))('card-text')('')('')
+    let date = curriedAdd(createNode('div'))('date')('pull-right')('')
+    cardHeader.appendChild(date)
+    card.appendChild(cardHeader)
+    cardBlock.appendChild(cardTitle)
+    cardBlock.appendChild(cardText)
+    card.appendChild(cardBlock)
+    colSm12.appendChild(card)
+    return colSm12
+  }
+
+  const createCard = (article) => {
+    let curriedAdd = R.curry(addClass)
+
+    let colSm12 = cardDOM().cloneNode(true)
+    colSm12.querySelector('.card-title').innerText = article.title
     let description = document.createTextNode(article.description)
     let img = curriedAdd(createNode('img'))('float-l')('mr-4')('')
     img.src = article.image
-    let date = curriedAdd(createNode('div'))('date')('pull-right')('')
-    date.innerText = moment(article.createdAt).format('lll')
+    colSm12.querySelector('.date').innerText = moment(article.createdAt).format('lll')
+    let cardHeader = colSm12.querySelector('.card-header')
+    let cardText = colSm12.querySelector('.card-text')
 
     if (!R.isEmpty(article.tags)) {
       R.forEach( tag => {
@@ -73,19 +88,11 @@
         }
       )(article.tags)
     }
-    cardHeader.appendChild(date)
-    card.appendChild(cardHeader)
     cardText.appendChild(img)
     cardText.appendChild(description)
-    cardBlock.appendChild(cardTitle)
-    cardBlock.appendChild(cardText)
-    card.appendChild(cardBlock)
-    colSm12.appendChild(card)
-    row.appendChild(colSm12)
-
-    
-
+    document.querySelector('.row').appendChild(colSm12)
   }
+
 
   const checkingTags = () => {
     tags = localStorage.getItem('tags')
@@ -96,9 +103,13 @@
       })(tags.split(','))
     }
     sortedArticles = sortArticles()
-    R.map(createCard)(sortedArticles) //todo must only 10 items
+    loadMore() //todo must only 10 items
+  }
 
-
+  const loadMore = () => {
+    startIdx = startIdx > sortedArticles.length ? startIdx : startIdx + 10
+    console.log(startIdx)
+    R.map(createCard)(sortedArticles.slice(startIdx - 10, startIdx))
   }
 
   const sortArticles = () => {
@@ -110,6 +121,7 @@
       article.tagWeight = tagWeight
       return article
     })(articles)
+    startIdx = 0
     return customSorting(result)
   }
 
@@ -121,12 +133,16 @@
     container.appendChild(row)
   }
 
-
-
   const customSorting = R.sortWith([
     R.comparator( (a, b) => a.tagWeight > b.tagWeight),
     R.comparator( (a, b) => moment(a.createdAt).isAfter(b.createdAt))
   ])
+
+  window.onscroll = debounce(event => {
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+      loadMore()
+    }
+  })
 
   btns.forEach( elem => {
     elem.addEventListener('change', event => {
@@ -134,8 +150,7 @@
       localStorage.setItem('tags', tags)
       sortedArticles = sortArticles()
       clearDOM()
-      R.map(createCard)(sortedArticles) //todo must only 10 items
-      console.log(sortedArticles)
+      loadMore() //todo must only 10 items
 
     })
   })
@@ -144,23 +159,10 @@
     console.log(event.target.value)
   }, 200) )
 
-
   window.onload = () => getJSON(' https://api.myjson.com/bins/152f9j')
     .then( body => {
       articles = body.data
-
       checkingTags()
-
-
-
-      // R.map(createCard)(customSorting(articles))
-
-
-
     })
-
-
-
-
 
 })()
