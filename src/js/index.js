@@ -9,14 +9,19 @@
   * R.propEq: http://ramdajs.com/docs/#propEq
   * R.curry: http://ramdajs.com/docs/#curry
   * R.forEach: http://ramdajs.com/docs/#forEach
+  * R.contains: http://ramdajs.com/docs/#contains
+  * R.comparator: http://ramdajs.com/docs/#comparator
+  * R.sortWith: http://ramdajs.com/docs/#sortWith
   */
 
 
-  let articles = []
   let btns = document.querySelectorAll("input[type='checkbox']")
   let input = document.querySelector('#search')
-  let row = document.querySelector('#row')
+  let container = document.querySelector('.container')
+  let row = document.querySelector('.row')
   let tags = []
+  let articles = []
+  let sortedArticles = []
 
 
   const getJSON = (url) => fetch(url)
@@ -55,7 +60,6 @@
     cardTitle.innerText = article.title
     let cardText = curriedAdd(createNode('div'))('card-text')('')('')
     let description = document.createTextNode(article.description)
-    // cardText.innerText = article.description
     let img = curriedAdd(createNode('img'))('float-l')('mr-4')('')
     img.src = article.image
     let date = curriedAdd(createNode('div'))('date')('pull-right')('')
@@ -78,15 +82,61 @@
     card.appendChild(cardBlock)
     colSm12.appendChild(card)
     row.appendChild(colSm12)
+
+    
+
+  }
+
+  const checkingTags = () => {
+    tags = localStorage.getItem('tags')
+    if ( !R.isNil(tags) && !R.isEmpty(tags) ) {
+      R.map(tag => {
+        let currentBtn = R.find(R.propEq('id', tag))(btns)
+        currentBtn.checked = true
+      })(tags.split(','))
+    }
+    sortedArticles = sortArticles()
+    R.map(createCard)(sortedArticles) //todo must only 10 items
+
+
+  }
+
+  const sortArticles = () => {
+    let result = R.map(article => {
+      let tagWeight = 0
+      R.forEach(tag => {
+        if (R.contains(tag.toLowerCase(), tags)) tagWeight++
+      })(article.tags)
+      article.tagWeight = tagWeight
+      return article
+    })(articles)
+    return customSorting(result)
+  }
+
+  const clearDOM = () => {
+    container.removeChild(document.querySelector('.row'))
+
+    let row = document.createElement('div')
+    row.classList.add('row')
+    container.appendChild(row)
   }
 
 
 
+  const customSorting = R.sortWith([
+    R.comparator( (a, b) => a.tagWeight > b.tagWeight),
+    R.comparator( (a, b) => moment(a.createdAt).isAfter(b.createdAt))
+  ])
 
   btns.forEach( elem => {
     elem.addEventListener('change', event => {
       tags = R.pluck('id', R.filter(checkbox => checkbox.checked)(btns))
       localStorage.setItem('tags', tags)
+      sortedArticles = sortArticles()
+      clearDOM()
+      R.map(createCard)(sortedArticles) //todo must only 10 items
+      console.log(sortedArticles)
+
     })
   })
 
@@ -98,16 +148,13 @@
   window.onload = () => getJSON(' https://api.myjson.com/bins/152f9j')
     .then( body => {
       articles = body.data
-      tags = localStorage.getItem('tags')
 
-      if ( !R.isNil(tags) && !R.isEmpty(tags) ) {
-        R.map(tag => {
-          let currentBtn = R.find(R.propEq('id', tag))(btns)
-          currentBtn.checked = true
-        })(tags.split(','))
-      }
+      checkingTags()
 
-      createCard(articles[0], tags)
+
+
+      // R.map(createCard)(customSorting(articles))
+
 
 
     })
