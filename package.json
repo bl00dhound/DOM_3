@@ -21,5 +21,8 @@
     "gulp-sourcemaps": "^2.6.0",
     "gulp-watch": "^4.3.11",
     "node-normalize-scss": "^3.0.0"
+  },
+  "dependencies": {
+    "ramda": "^0.24.1"
   }
 }
