@@ -93,7 +93,6 @@
     document.querySelector('.row').appendChild(colSm12)
   }
 
-
   const checkingTags = () => {
     tags = localStorage.getItem('tags')
     if ( !R.isNil(tags) && !R.isEmpty(tags) ) {
@@ -123,16 +122,15 @@
       article.tagWeight = tagWeight
       return article
     })(articlesForSorting)
-    startIdx = 0
     return customSorting(result)
   }
 
   const clearDOM = () => {
     container.removeChild(document.querySelector('.row'))
-
     let row = document.createElement('div')
     row.classList.add('row')
     container.appendChild(row)
+    startIdx = 0
   }
 
   const customSorting = R.sortWith([
@@ -151,6 +149,7 @@
       tags = R.pluck('id', R.filter(checkbox => checkbox.checked)(btns))
       localStorage.setItem('tags', tags)
       sortedArticles = sortArticles()
+      input.value = ''
       clearDOM()
       loadMore()
 
@@ -162,7 +161,6 @@
     let filteredArticles = R.filter(article => R.test(new RegExp(event.target.value, 'i'), article.title))(articles)
     sortedArticles = sortArticles(filteredArticles)
     console.log(sortedArticles)
-    startIdx = 0
     clearDOM()
     loadMore()
   }, 200) )
