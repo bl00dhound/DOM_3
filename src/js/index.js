@@ -106,10 +106,10 @@
   }
 
   const loadMore = () => {
-    // startIdx = startIdx > sortedArticles.length ? startIdx : startIdx + 10
+    if (startIdx < sortedArticles.length-1) R.map(createCard)(sortedArticles.slice(startIdx, startIdx + 10))
+    if (startIdx >= sortedArticles.length-1) startIdx -= 10
     startIdx += 10
-    if (startIdx < sortedArticles.length-1) R.map(createCard)(sortedArticles.slice(startIdx - 10, startIdx))
-    if (startIdx >= sortedArticles.length-1) startIdx = sortedArticles.length
+
     console.log(startIdx)
   }
 
@@ -156,16 +156,19 @@
     })
   })
 
+  const filterByValue = (query) =>
+    R.filter(article => R.test(new RegExp(query, 'i'), article.title))(articles)
+
   input.addEventListener('input', debounce(event => {
     console.log(event.target.value)
-    let filteredArticles = R.filter(article => R.test(new RegExp(event.target.value, 'i'), article.title))(articles)
-    sortedArticles = sortArticles(filteredArticles)
+
+    sortedArticles = sortArticles(filterByValue(event.target.value))
     console.log(sortedArticles)
     clearDOM()
     loadMore()
   }, 200) )
 
-  window.onload = () => getJSON(' https://api.myjson.com/bins/152f9j')
+  window.onload = () => getJSON('https://api.myjson.com/bins/152f9j')
     .then( body => {
       articles = body.data
       checkingTags()
