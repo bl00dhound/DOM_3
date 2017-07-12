@@ -103,16 +103,18 @@
       })(tags.split(','))
     }
     sortedArticles = sortArticles()
-    loadMore() //todo must only 10 items
+    loadMore()
   }
 
   const loadMore = () => {
-    startIdx = startIdx > sortedArticles.length ? startIdx : startIdx + 10
+    // startIdx = startIdx > sortedArticles.length ? startIdx : startIdx + 10
+    startIdx += 10
+    if (startIdx < sortedArticles.length-1) R.map(createCard)(sortedArticles.slice(startIdx - 10, startIdx))
+    if (startIdx >= sortedArticles.length-1) startIdx = sortedArticles.length
     console.log(startIdx)
-    R.map(createCard)(sortedArticles.slice(startIdx - 10, startIdx))
   }
 
-  const sortArticles = () => {
+  const sortArticles = (articlesForSorting = articles) => {
     let result = R.map(article => {
       let tagWeight = 0
       R.forEach(tag => {
@@ -120,7 +122,7 @@
       })(article.tags)
       article.tagWeight = tagWeight
       return article
-    })(articles)
+    })(articlesForSorting)
     startIdx = 0
     return customSorting(result)
   }
@@ -150,13 +152,19 @@
       localStorage.setItem('tags', tags)
       sortedArticles = sortArticles()
       clearDOM()
-      loadMore() //todo must only 10 items
+      loadMore()
 
     })
   })
 
   input.addEventListener('input', debounce(event => {
     console.log(event.target.value)
+    let filteredArticles = R.filter(article => R.test(new RegExp(event.target.value, 'i'), article.title))(articles)
+    sortedArticles = sortArticles(filteredArticles)
+    console.log(sortedArticles)
+    startIdx = 0
+    clearDOM()
+    loadMore()
   }, 200) )
 
   window.onload = () => getJSON(' https://api.myjson.com/bins/152f9j')
