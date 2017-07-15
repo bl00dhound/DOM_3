@@ -112,6 +112,7 @@
 
   const checkingTags = () => {                                   // getting tags for localStorages
     tags = localStorage.getItem('tags')
+    if (R.isNil(tags) || R.isEmpty(tags)) localStorage.setItem('tags', [])
     if ( !R.isNil(tags) && !R.isEmpty(tags) ) {
       R.map(tag => {
         let currentBtn = R.find(R.propEq('id', tag))(btns)
